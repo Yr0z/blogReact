@@ -10,6 +10,7 @@ import Home from './Containers/Home/Home';
 import Contact from './Components/Contact/Contact';
 import Articles from './Containers/Articles/Articles';
 import Article from './Containers/Articles/Article/Article';
+import Ajouter from './Containers/Admin/Ajouter/Ajouter'
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path={routes.CONTACT} component={Contact} />
                     <Route exact path={routes.ARTICLES} component={Articles} />
                     <Route exact path={routes.ARTICLES + "/:id"} component={Article} />
+                    <Route exact path={routes.AJOUTER} component={Ajouter} />
                     <Route render={() => <h1>404</h1>} />
                 </Switch>
             </Layout>

@@ -16,6 +16,7 @@ function Navigation() {
             <NavigationItem to={routes.CONTACT}>
                 Contact
             </NavigationItem>
+            <NavigationItem exact to={routes.AJOUTER}>Ajouter</NavigationItem>
         </ul>
     );
 }
