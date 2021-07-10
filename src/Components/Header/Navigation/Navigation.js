@@ -1,7 +1,7 @@
 // Librairies
 import React from 'react';
 import classes from './Navigation.module.css';
-import routes from '../../../Config/routes';
+import routes from '../../../config/routes';
 
 // Composants
 import NavigationItem from './NavigationItem/NavigationItem';
@@ -13,10 +13,10 @@ function Navigation() {
                 Accueil
             </NavigationItem>
             <NavigationItem to={routes.ARTICLES}>Articles</NavigationItem>
-            <NavigationItem to={routes.CONTACT}>
-                Contact
+            <NavigationItem to={routes.CONTACT}>Contact</NavigationItem>
+            <NavigationItem exact to={routes.AJOUTER}>
+                Ajouter
             </NavigationItem>
-            <NavigationItem exact to={routes.AJOUTER}>Ajouter</NavigationItem>
         </ul>
     );
 }

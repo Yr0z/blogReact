@@ -7,10 +7,10 @@
     text-align: left;
 }
 .submit {
-     text-align: right;
+    text-align: right;
 }
 
-.submit input{
+.submit input {
     border: 0;
     padding: 10px 15px;
     background-color: #fb743e;
@@ -18,6 +18,11 @@
     margin: 5px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.submit input:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .submit input:focus,

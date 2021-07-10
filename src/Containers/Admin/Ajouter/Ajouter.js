@@ -1,81 +1,165 @@
 // Librairies
 import React, { useState } from 'react';
 import classes from './Ajouter.module.css';
+import axios from '../../../config/axios-firebase';
+import routes from '../../../config/routes';
 
 // Composants
-import Input from '../../../Components/UI/Input/Input'
+import Input from '../../../Components/UI/Input/Input';
 
-function Ajouter() {
-
-    //State
+function Ajouter(props) {
+    //States
     const [inputs, setInputs] = useState({
         titre: {
             elementType: 'input',
             elementConfig: {
                 type: 'text',
-                placeholder: 'Titre de l\'article'
+                placeholder: "Titre de l'article",
             },
             value: '',
-            label: 'Titre'
+            label: 'Titre',
+            valid: false,
+            validation: {
+                required: true,
+                minLength: 5,
+                maxLength: 50,
+            },
+            touched: false,
+            errorMessage: 'Le titre doit faire entre 5 et 10 caractères',
         },
         contenu: {
             elementType: 'textarea',
             elementConfig: {},
             value: '',
-            label: 'Contenu de l\'artcile'
-        }, 
+            label: "Contenu de l'artcile",
+            valid: false,
+            validation: {
+                required: true,
+            },
+            touched: false,
+            errorMessage: 'Le contenu ne doit pas être vide',
+        },
         auteur: {
             elementType: 'input',
             elementConfig: {
                 type: 'text',
-                placeholder: 'Auteur de l\'article'
+                placeholder: "Auteur de l'article",
             },
             value: '',
-            label: 'Auteur'
+            label: 'Auteur',
+            valid: false,
+            validation: {
+                required: true,
+            },
+            touched: false,
+            errorMessage: 'Cet article doit avoir un auteur',
         },
         brouillon: {
             elementType: 'select',
             elementConfig: {
                 options: [
-                    {value: true, displayValue: 'Brouillon'},
-                    {value: false, displayValue: 'Publié'}
-                ]
+                    { value: true, displayValue: 'Brouillon' },
+                    { value: false, displayValue: 'Publié' },
+                ],
             },
-            value: '',
-            label: 'Etat'
-        }
+            value: true,
+            label: 'Etat',
+            valid: true,
+            validation: {},
+        },
     });
 
+    const [valid, setValid] = useState(false);
+
     // Fonctions
+    const checkValidity = (value, rules) => {
+        let isValid = true;
+
+        if (rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid;
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+
+        return isValid;
+    };
+
     const inputChangedHandler = (event, id) => {
-        const nouveauxInputs = {...inputs};
+        // Change la valeur
+        const nouveauxInputs = { ...inputs };
         nouveauxInputs[id].value = event.target.value;
+        nouveauxInputs[id].touched = true;
+
+        // Vérification de la valeur
+        nouveauxInputs[id].valid = checkValidity(
+            event.target.value,
+            nouveauxInputs[id].validation,
+        );
+
         setInputs(nouveauxInputs);
+
+        // Vérification du formulaire
+        let formIsValid = true;
+        for (let inputs in nouveauxInputs) {
+            formIsValid = nouveauxInputs[inputs].valid && formIsValid;
+        }
+        setValid(formIsValid);
+    };
+
+    const formHandler = event => {
+        event.preventDefault();
+
+        const article = {
+            titre: inputs.titre.value,
+            contenu: inputs.contenu.value,
+            auteur: inputs.auteur.value,
+            brouillon: inputs.brouillon.value,
+        };
+
+        axios
+            .post('/articles.json', article)
+            .then(response => {
+                console.log(response);
+                props.history.replace(routes.ARTICLES);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     };
 
     // Variables
     const formElementsArray = [];
-    for(let key in inputs) {
-       formElementsArray.push({
+    for (let key in inputs) {
+        formElementsArray.push({
             id: key,
-            config: inputs[key]
-       });
+            config: inputs[key],
+        });
     }
 
     let form = (
-        <form className={classes.Ajouter}>
+        <form className={classes.Ajouter} onSubmit={e => formHandler(e)}>
             {formElementsArray.map(formElement => (
                 <Input
                     key={formElement.id}
                     id={formElement.id}
                     value={formElement.config.value}
-                    label={formElement.config.label} 
+                    label={formElement.config.label}
                     type={formElement.config.elementType}
-                    config={formElement.config.elementConfig} 
-                    changed={(e)=> inputChangedHandler(e, formElement.id)}/>
+                    config={formElement.config.elementConfig}
+                    valid={formElement.config.valid}
+                    touched={formElement.config.touched}
+                    errorMessage={formElement.config.errorMessage}
+                    changed={e => inputChangedHandler(e, formElement.id)}
+                />
             ))}
             <div className={classes.submit}>
-                <input type='submit' value="Envoyer" />
+                <input type="submit" value="Ajouter un article" disabled={!valid} />
             </div>
         </form>
     );
