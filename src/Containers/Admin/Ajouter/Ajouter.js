@@ -25,7 +25,22 @@ function Ajouter(props) {
                 maxLength: 50,
             },
             touched: false,
-            errorMessage: 'Le titre doit faire entre 5 et 10 caractères',
+            errorMessage: 'Le titre doit faire entre 5 et 50 caractères',
+        },
+        accroche: {
+            elementType: 'textarea',
+            elementConfig: {},
+            value: '',
+            label: "Accroche de l'article",
+            valid: false,
+            validation: {
+                required: true,
+                minLength: 10,
+                maxLength: 140,
+            },
+            touched: false,
+            errorMessage:
+                "L'accroche ne doit pas être vide et doit être comprise entre 10 et 140 caractère",
         },
         contenu: {
             elementType: 'textarea',
@@ -120,6 +135,8 @@ function Ajouter(props) {
             contenu: inputs.contenu.value,
             auteur: inputs.auteur.value,
             brouillon: inputs.brouillon.value,
+            accroche: inputs.accroche.value,
+            date: Date.now(),
         };
 
         axios

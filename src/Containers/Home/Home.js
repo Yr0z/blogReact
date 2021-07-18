@@ -1,23 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import routes from '../../config/routes';
+import axios from '../../config/axios-firebase';
+
+// Composants
+import DisplayedArticles from '../../Components/DisplayedArticles/DisplayedArticles';
 
 function Home() {
+    // State
+    const [articles, setArticles] = useState([]);
+
+    //  ComponentDidMount
+    useEffect(() => {
+        axios
+            .get('/articles.json?orderBy="date"&limitToLast=3')
+            .then(response => {
+                const articlesArray = [];
+
+                for (let key in response.data) {
+                    articlesArray.push({
+                        ...response.data[key],
+                        id: key,
+                    });
+                }
+
+                articlesArray.reverse();
+
+                setArticles(articlesArray);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
+
     return (
         <>
             <h1>Accueil</h1>
-            <Link to={routes.ARTICLES + '/1'}>Voir mon article</Link>
-            <Link
-                to={{
-                    pathname: '/articles/1',
-                    // hash: '#projets'
-                    // search: "?order=new"
-                    state: { fromHome: true },
-                }}
-                style={{ marginLeft: '15px' }}
-            >
-                Lien vers une ancre
-            </Link>
+            <DisplayedArticles articles={articles} />
         </>
     );
 }
